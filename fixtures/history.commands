@@ -1,0 +1,21 @@
+# Phase 1 only: cross-parent grouping, history and subtree restoration
+init 800 600
+create g scene
+create g left in scene
+create g right in scene
+create rect a 20 30 100 50 #4a90d9 in left
+create text label 40 60 "组合与撤销" in right
+group item label a
+tree
+move item 10 20
+undo
+redo
+ungroup item
+undo
+redo
+addto right label
+front a
+back label
+delete left
+undo
+tree

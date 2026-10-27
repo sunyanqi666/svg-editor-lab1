@@ -1,0 +1,42 @@
+@startuml
+abstract class Shape {
+  +id: string
+  +parent: Group
+  +move(dx, dy)
+  +scale(factor)
+  +set(attr, value)
+  +clone(): Shape
+}
+class Group {
+  -items: Shape[]
+  +insert(shape, index)
+  +remove(shape)
+}
+Shape <|-- Group
+Shape <|-- Rect
+Shape <|-- Circle
+Shape <|-- Ellipse
+Shape <|-- Line
+Shape <|-- Text
+Group "0..1" *-- "0..*" Shape : children
+Document *-- Group : canvas root
+Session *-- Document : private current
+Session *-- History
+History o-- EditCommand : past / future
+abstract class EditCommand {
+  +execute(document)
+  +undo()
+  +redo()
+  #apply(document)
+}
+EditCommand <|-- MoveCommand
+EditCommand <|-- GroupCommand
+EditCommand <|-- CreateCommand
+CommandRouter o-- CommandRoute : name registry
+CommandRouter --> Session
+CommandRouter --> ShapeFactory
+CommandRouter --> SvgFileStore
+SvgFileStore --> SvgCodec
+SvgCodec --> ShapeFactory
+SvgCodec --> Document
+@enduml

@@ -2,15 +2,24 @@
   "name": "svg-editor-lab1",
   "version": "0.1.0",
   "private": true,
-  "engines": { "node": ">=22" },
+  "engines": {
+    "node": ">=22"
+  },
   "type": "module",
   "description": "Object-oriented SVG command-line editor",
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "cli": "npm run build --silent && node dist/cli/main.js",
     "test": "npm run build && node --test test/*.test.mjs",
-    "check:architecture": "node scripts/check-architecture.mjs"
+    "check:architecture": "node scripts/check-architecture.mjs",
+    "check": "npm test && npm run check:architecture",
+    "demo": "npm run build --silent && node scripts/demo.mjs"
   },
-  "dependencies": { "@xmldom/xmldom": "^0.8.11" },
-  "devDependencies": { "@types/node": "^24.0.0", "typescript": "^5.9.0" }
+  "dependencies": {
+    "@xmldom/xmldom": "^0.8.11"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.9.0"
+  }
 }

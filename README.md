@@ -32,8 +32,12 @@ save demo.svg
 ```sh
 npm test
 npm run check:architecture
+npm run check
+npm run demo
 npm run cli < fixtures/flowchart.commands
 ```
+
+`npm run check` 一次运行编译、全部测试和架构检查；`npm run demo` 回放流程图与跨容器撤销两组案例，在临时目录校验 SVG 后自动清理，不改动工程文件。
 
 最后一条会生成或覆盖 `fixtures/flowchart.svg`，可直接在浏览器中打开。`fixtures/other.svg` 是含缺失 id 的外部 SVG 测试案例。
 
@@ -66,7 +70,7 @@ npm run cli < fixtures/flowchart.commands
 
 - 保存为标准 SVG XML；不填写的 fill/stroke 不额外生成，遵循 SVG 默认值。
 - 读入前先保留所有显式 id，再按标签名与序号分配缺失 id 并警告，避免与后面的显式 id 撞名。重复显式 id 拒绝读入。
-- `save` 无路径时使用最近一次成功读取或保存的路径；`init` 清除该路径。未指定过路径时会报错。
+- `save` 无路径时严格使用最近一次成功**读取**的路径；显式另存到其他路径不会改变该目标。`init` 清除读取路径。新建且未读取过文件的文档，每次保存都须提供路径。
 - 成功执行 `init`、`read`、`save` 或修改画布尺寸后，旧历史被清空，undo/redo 禁用至下一次成功编辑；查询 `canvas` 不影响历史。
 - 显示命令和失败命令不改变历史；撤销后成功执行新编辑会清空 redo。每条编辑命令是一个撤销单元。
 - 删除容器会删除整棵子树；撤销恢复完整结构和顺序。按任务书规定，svg 直接子节点中的 g 不允许 ungroup，嵌套 g 可以解散。
@@ -83,4 +87,16 @@ npm run cli < fixtures/flowchart.commands
 - `box` 和插件系统不属于当前阶段，创建时返回 unknown shape type。
 - 快照撤销适用于实验规模，每条编辑的时间和历史内存开销为 O(n)；未做大文档性能承诺。
 
-架构方案、过程记录、一致性自查和质量保证见 [doc/README.md](doc/README.md)。
+参数数量错误会显示对应命令的 `usage:`；输入数字错误也会附上语法。任务书指定的语义错误仍保留原文格式。`help` 除全部 19 条命令外，还列出六种图形的创建参数。
+
+## 自动检查与作业材料
+
+GitHub Actions 在 main 推送、面向 main 的 PR 或手动触发时，分别使用 Node.js 22 和 24 执行安装、`npm run check` 和两组演示回放。流水线只读取仓库，不自动修改代码、标签或发布内容。
+
+- [架构方案、过程记录、一致性自查和质量保证](doc/README.md)
+- [需求与测试逐项对应表](doc/requirements.md)
+- [模块依赖图](doc/architecture.puml)
+- [关键类关系图](doc/classes.puml)
+- [GitHub Actions 运行记录](https://github.com/sunyanqi666/svg-editor-lab1/actions)
+
+保持原阶段提交历史，优化另作分步提交；`final` 标记当前最终交付提交。
