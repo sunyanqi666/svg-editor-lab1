@@ -10,7 +10,7 @@ export class UngroupCommand extends EditCommand {
     // Preserve inherited style when removing the group boundary.
     for (const child of children) {
       for (const [key,value] of Object.entries(group.attributes))
-        if (child.attributes[key] === undefined) child.set(key,value);
+        if (child.attributes[key] === undefined) child.importAttribute(key,value);
     }
     parent.remove(group);
     children.forEach((child,i) => parent.insert(child,index+i));

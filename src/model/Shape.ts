@@ -31,6 +31,17 @@ export abstract class Shape {
       this.values.set(name, value);
     } else throw new Error('unknown attribute: ' + name);
   }
+  /** Additional SVG presentation attributes are round-tripped, not CLI-settable. */
+  importAttribute(name: string, value: string): void {
+    if (['font-size', 'text-anchor', 'font-family', 'font-weight'].includes(name)) {
+      if (name === 'font-size') {
+        const size = Shape.finite(value.replace(/px$/, ''));
+        if (size < 0) throw new Error('font-size must be non-negative');
+        value = String(size);
+      }
+      this.values.set(name,value);
+    } else this.set(name,value);
+  }
   static finite(value: string): number {
     if (!/^[+-]?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?$/i.test(value.trim()))
       throw new Error('invalid number: ' + value);
@@ -47,7 +58,7 @@ export abstract class Shape {
     for (const key of this.geometry) this.set(key, String(this.number(key) * factor));
   }
   protected copyTo<T extends Shape>(target: T): T {
-    for (const [key, value] of this.values) target.set(key, value);
+    for (const [key, value] of this.values) target.importAttribute(key, value);
     return target;
   }
   describe(): string {

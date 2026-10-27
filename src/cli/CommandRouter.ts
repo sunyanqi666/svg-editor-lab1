@@ -1,3 +1,4 @@
+import { SvgFileStore } from '../io/SvgFileStore.js';
 import { GroupCommand } from '../commands/GroupCommand.js';
 import { UngroupCommand } from '../commands/UngroupCommand.js';
 import { AddToCommand } from '../commands/AddToCommand.js';
@@ -16,6 +17,7 @@ import { Presenter } from './Presenter.js';
 
 /** Single command-name dispatch point. Registry is intentionally built-in for Phase 1. */
 export class CommandRouter {
+  private readonly files = new SvgFileStore();
   private readonly tokenizer = new Tokenizer();
   private readonly presenter = new Presenter();
   private readonly factory = new ShapeFactory();
@@ -23,7 +25,21 @@ export class CommandRouter {
   constructor(readonly session = new Session()) {
     this.register('init', 'init [w] [h]', a => {
       this.count(a,0,2); const doc = new Document(a[0] === undefined ? 800 : this.n(a,0), a[1] === undefined ? 600 : this.n(a,1));
-      this.session.replace(doc); return `canvas ${doc.width}x${doc.height} created`;
+      this.session.replace(doc); this.files.forget(); return `canvas ${doc.width}x${doc.height} created`;
+    });
+    this.register('read','read <file.svg>',a => {
+      this.count(a,1); const result = this.files.read(a[0]!); this.session.replace(result.document);
+      return [...result.warnings,`read ${a[0]} (${result.document.all().length} elements)`].join('\n');
+    });
+    this.register('save','save [file.svg]',a => {
+      this.count(a,0,1); const doc = this.session.document; const path = this.files.save(doc,a[0]);
+      this.session.barrier(); return `saved to ${path} (${doc.all().length} elements)`;
+    });
+    this.register('canvas','canvas [w] [h]',a => {
+      const doc = this.session.document;
+      if (!a.length) return `canvas ${doc.width}x${doc.height}`;
+      this.count(a,2); const working = doc.clone(); working.resize(this.n(a,0),this.n(a,1));
+      this.session.replace(working); return `canvas resized to ${working.width}x${working.height}`;
     });
     this.register('create', 'create <type> <id> [params…] [in <containerId>]', (a,q) => {
       if (a.length < 2) throw new Error('usage: create <type> <id> [params…] [in <containerId>]');
