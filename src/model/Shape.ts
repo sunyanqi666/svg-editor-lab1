@@ -9,8 +9,8 @@ export abstract class Shape {
   }
   get id(): string { return this.identifier; }
   get parent(): Group | undefined { return this.owner; }
-  /** Tree mutation is mediated by Group. */
-  assignParent(parent: Group | undefined): void { this.owner = parent; }
+  /** Only Composite implementations may change both ends of a tree relation. */
+  protected static assignParent(shape: Shape, parent: Group | undefined): void { shape.owner = parent; }
   get attributes(): Readonly<Record<string, string>> { return Object.fromEntries(this.values); }
   get children(): readonly Shape[] { return []; }
   get content(): string | undefined { return undefined; }

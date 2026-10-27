@@ -6,6 +6,7 @@ export abstract class EditCommand {
   private after: Document | undefined;
   private summary = '';
   execute(document: Document): { document: Document; message: string } {
+    if (this.before) throw new Error('command has already executed');
     const working = document.clone();
     const message = this.apply(working);
     this.before = document.clone(); this.after = working.clone(); this.summary = message;

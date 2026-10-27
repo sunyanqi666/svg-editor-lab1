@@ -38,6 +38,7 @@ test('file commands are atomic and establish history barriers only on success',(
   assert.match(c.run('save'),/no file path/);ok(c,'undo');ok(c,'redo');
   const file=join(directory,'drawing with spaces.svg');ok(c,`save "${file}"`);
   assert.match(c.run('undo'),/undo not allowed after io command/);
+  ok(c,`read "${file}"`);
   ok(c,'move r 10 0');ok(c,'canvas');ok(c,'undo');ok(c,'redo');
   const before=ok(c,'tree');
   writeFileSync(join(directory,'bad.svg'),'<svg><g></svg>');

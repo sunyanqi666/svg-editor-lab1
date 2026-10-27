@@ -26,6 +26,7 @@ export class SvgFileStore {
       try { unlinkSync(temporary); } catch { /* No temporary file left to clean. */ }
       throw new Error('cannot write file: ' + (path ?? target));
     }
-    this.sourcePath = target; return path ?? target;
+    // The specification defines save-without-path as the last successful read path.
+    return path ?? target;
   }
 }

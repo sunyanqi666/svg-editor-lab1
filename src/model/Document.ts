@@ -2,7 +2,7 @@ import { Group } from './Group.js';
 import { Shape } from './Shape.js';
 
 export class Document {
-  private tree = new Group('__canvas__');
+  private tree = new Group('__canvas__', false);
   private canvasWidth: number;
   private canvasHeight: number;
   constructor(width = 800, height = 600) {
@@ -36,6 +36,7 @@ export class Document {
     if (this.find(id)) throw new Error('id already exists: ' + id);
   }
   add(shape: Shape, parent = this.tree): void {
+    if (parent !== this.tree && !this.all().includes(parent)) throw new Error('parent container does not belong to this document');
     const ids = new Set(this.all().map(item => item.id));
     const visit = (item: Shape): void => {
       if (ids.has(item.id)) throw new Error('id already exists: ' + item.id);

@@ -80,7 +80,8 @@ export class SvgCodec {
           throw new Error('unexpected shape content');
         combined.apply(shape,styles);
       }
-      doc.add(shape,parent);
+      // Detached subtrees are built through Composite; document root receives only validated trees.
+      parent.insert(shape);
     };
     for (const child of Array.from(root.childNodes)) {
       if (child.nodeType === 1) visit(child as Element,doc.root,new SvgTransform(),doc.root.attributes);
