@@ -12,6 +12,7 @@ export class Session {
     return this.current;
   }
   replace(document: Document): void { this.current = document.clone(); this.history.barrier(); }
+  ensureDocument(): void { void this.requireCurrent(); }
   barrier(): void { this.history.barrier(); }
   undo(): string {
     void this.requireCurrent();

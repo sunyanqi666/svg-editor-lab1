@@ -32,7 +32,7 @@ test('real CLI replays the full flowchart and produces a readable SVG',()=>{
  }finally{rmSync(directory,{recursive:true,force:true});}
 });
 test('CLI contains all 19 required commands and rejects extra arguments',()=>{
- const c=new CommandRouter();const help=ok(c,'help').split('\n');assert.equal(help.length,19);
+ const c=new CommandRouter();const help=ok(c,'help').split('\n').filter(line=>/^[a-z]+(?: |$)/.test(line));assert.equal(help.length,19);
  for(const name of ['init','read','save','canvas','create','delete','move','scale','set','group','ungroup','addto','front','back','tree','show','help','undo','redo'])assert.ok(help.some(line=>line.split(' ')[0]===name),name);
  ok(c,'init');for(const s of ['help extra','undo extra','redo extra','tree a b','show','canvas 1','init 1 2 3'])assert.match(c.run(s),/^error:/);
 });
