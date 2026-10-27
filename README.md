@@ -4,7 +4,7 @@
 
 **Git 仓库地址：** [https://github.com/sunyanqi666/svg-editor-lab1](https://github.com/sunyanqi666/svg-editor-lab1)
 
-仓库为私有仓库，主分支为 `main`，版本标签 `final` 标记当前最终版本。当前支持 `rect`、`circle`、`ellipse`、`line`、`text`、`g` 六种类型及 19 条命令。
+仓库为公开仓库，主分支为 `main`，版本标签 `final` 标记当前最终版本。当前支持 `rect`、`circle`、`ellipse`、`line`、`text`、`g` 六种类型及 19 条命令。
 
 ## 安装与运行
 
