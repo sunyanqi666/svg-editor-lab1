@@ -1,0 +1,11 @@
+@startuml
+package cli
+package commands
+package io
+package model
+cli --> commands
+cli --> io
+cli --> model : read-only presentation
+commands --> model
+io --> model
+@enduml

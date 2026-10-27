@@ -10,6 +10,9 @@ export class SvgCodec {
   private readonly namespace = 'http://www.w3.org/2000/svg';
   decode(source: string): { document: Document; warnings: string[] } {
     if (/<!DOCTYPE|<!ENTITY/i.test(source)) throw new Error('SVG document declarations are not supported');
+    // xmldom discards some text before the root, so validate the XML prolog too.
+    const afterProlog = source.replace(/^(?:\uFEFF|\s|<!--[\s\S]*?-->|<\?[\s\S]*?\?>)*/, '');
+    if (!/^<[A-Za-z_:]/.test(afterProlog)) throw new Error('unexpected text before SVG root');
     const issues: string[] = [];
     const parsed = new DOMParser({ errorHandler: {
       warning: message => issues.push(String(message)), error: message => issues.push(String(message)),
@@ -21,6 +24,8 @@ export class SvgCodec {
       throw new Error('expected SVG root element');
     const roots = Array.from(parsed.childNodes).filter(node => node.nodeType === 1);
     if (roots.length !== 1) throw new Error('SVG must have exactly one root element');
+    if (Array.from(parsed.childNodes).some(node => (node.nodeType === 3 || node.nodeType === 4) && node.textContent?.trim()))
+      throw new Error('unexpected text outside SVG root');
     const doc = new Document(this.dimension(root.getAttribute('width'),800), this.dimension(root.getAttribute('height'),600));
     const viewBox = root.getAttribute('viewBox');
     if (viewBox) {
@@ -104,7 +109,7 @@ export class SvgCodec {
     return Object.entries(values).map(([key,value]) => ` ${key}="${this.escape(value)}"`).join('');
   }
   private escape(value: string): string {
-    if (/[\u0000-\u0008\u000B\u000C\u000E-\u001F\uFFFE\uFFFF]/u.test(value)) throw new Error('invalid XML character');
+    if (/[\u0000-\u0008\u000B\u000C\u000E-\u001F\uD800-\uDFFF\uFFFE\uFFFF]/u.test(value)) throw new Error('invalid XML character');
     return value.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
       .replace(/\r/g,'&#13;').replace(/\n/g,'&#10;').replace(/\t/g,'&#9;');
   }

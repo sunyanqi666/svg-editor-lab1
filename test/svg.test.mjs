@@ -29,7 +29,7 @@ test('external translate and scale preserve nested geometry and text presentatio
  assert.equal(codec.encode(codec.decode(codec.encode(doc)).document),codec.encode(doc));
 });
 test('malformed XML, duplicate IDs, unknown features and invalid values fail',()=>{
- for(const source of [svg('<rect id="r"/><circle id="r"/>'),svg('<rect id="r" width="-1"/>'),svg('<path id="p"/>'),svg('<rect id="r" style="fill:red"/>'),'<svg><g></svg>', '<!DOCTYPE svg><svg/>',svg('<g transform="rotate(30)"/>'),svg('<g transform="scale(1,2)"/>'),svg('<text><tspan>no</tspan></text>')])assert.throws(()=>codec.decode(source),undefined,source);
+ for(const source of [svg('<rect id="r"/><circle id="r"/>'),svg('<rect id="r" width="-1"/>'),svg('<path id="p"/>'),svg('<rect id="r" style="fill:red"/>'),'<svg><g></svg>', '<svg/>junk', 'junk<svg/>', '<!DOCTYPE svg><svg/>',svg('<g transform="rotate(30)"/>'),svg('<g transform="scale(1,2)"/>'),svg('<text><tspan>no</tspan></text>')])assert.throws(()=>codec.decode(source),undefined,source);
 });
 test('file commands are atomic and establish history barriers only on success',()=>{
  const directory=mkdtempSync(join(tmpdir(),'svg-editor-'));
