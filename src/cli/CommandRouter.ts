@@ -45,6 +45,8 @@ export class CommandRouter {
     this.register('back','back <id>',a => { this.count(a,1); return this.session.execute(new ReorderCommand(a[0]!,false)); });
     this.register('tree','tree [id]',a => { this.count(a,0,1); return this.presenter.tree(this.session.document,a[0]); });
     this.register('show','show <id>',a => { this.count(a,1); return this.presenter.show(this.session.document,a[0]!); });
+    this.register('undo','undo',a => { this.count(a,0); return this.session.undo(); });
+    this.register('redo','redo',a => { this.count(a,0); return this.session.redo(); });
     this.register('help','help',a => { this.count(a,0); return [...this.routes.values()].map(r => r.syntax).join('\n'); });
   }
   private register(name: string, syntax: string, run: (args: string[], quoted: boolean[]) => string): void {
